@@ -13,10 +13,12 @@ endif
 
 # Directory variables.
 INC_DIR = ./include
-INC_DIR = /usr/include/mysql
+INC_DIR = /usr/include/mysql/
 
 # Flags passed to the C++ compiler.
 CFLAGS += -g -Wall -Wextra
+CFLAGS += -I/usr/include/mysql/
+CFLAGS += -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -ldl -lz -lssl -lcrypto -lresolv -lm -lrt
 
 # Source files to compile.
 SRCS = $(wildcard *.c)

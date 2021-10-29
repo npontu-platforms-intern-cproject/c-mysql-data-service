@@ -3,7 +3,7 @@
 int main()
 {
 
-    lxw_workbook *workbook = workbook_new("hello_world.xlsx");
+    lxw_workbook *workbook = workbook_new("data-book.xlsx");
     lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
 
     worksheet_write_string(worksheet, 0, 0, "Hello", NULL);

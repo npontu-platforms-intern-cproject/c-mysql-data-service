@@ -9,7 +9,7 @@
 				"-g",
 				"${file}",
 				"-o",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"${fileDirname}/${fileBasenameNoExtension}",
 				"`mysql_config --cflags --libs`"
 			],
 			"options": {
