@@ -1,5 +1,7 @@
 {
-    "files.associations": {
-        "mysql.h": "c"
-    }
+	"files.associations": {
+		"mysql.h": "c",
+		"stdio.h": "c",
+		"types.h": "c"
+	}
 }

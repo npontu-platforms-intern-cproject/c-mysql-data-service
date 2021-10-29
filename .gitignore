@@ -1,3 +1,9 @@
+# VSCode
+.vscode/
+
+# Excel files
+.xlsx
+
 # Prerequisites
 *.d
 
