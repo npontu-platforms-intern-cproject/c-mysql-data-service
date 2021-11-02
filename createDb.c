@@ -20,7 +20,7 @@ int main()
         exit(1);
     }
 
-    if (mysql_query(con, "CREATE DATABASE cproject"))
+    if (mysql_query(con, "CREATE DATABASE testdb"))
     {
         fprintf(stderr, "%s\n", mysql_error(con));
         mysql_close(con);

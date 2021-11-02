@@ -18,7 +18,6 @@ INC_DIR = /usr/include/mysql/
 # Flags passed to the C++ compiler.
 CFLAGS += -g -Wall -Wextra
 CFLAGS += -I/usr/include/mysql/
-CFLAGS += -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -ldl -lz -lssl -lcrypto -lresolv -lm -lrt
 
 # Source files to compile.
 SRCS = $(wildcard *.c)
@@ -29,6 +28,7 @@ LIBXLSXWRITER = ./src/libxlsxwriter.a
 LIBS = $(LIBXLSXWRITER) -lz
 ifdef USE_SYSTEM_MINIZIP
 LIBS += -lminizip
+LIBS += -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -ldl -lz -lssl -lcrypto -lresolv -lm -lrt
 endif
 ifdef USE_OPENSSL_MD5
 LIBS += -lcrypto

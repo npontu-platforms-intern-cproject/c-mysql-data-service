@@ -60,20 +60,13 @@ int main()
                     {
                         worksheet_write_string(worksheet, 0, k, row[k], NULL);
                     }
-                                }
+                }
 
                 printf("\n");
             }
 
             // printf("%s ", row[i] ? row[i] : "NULL");
-            if (i % 2 == 0)
-            {
-                worksheet_write_number(worksheet, 1, 0, row[i], NULL);
-            }
-            else
-            {
-                worksheet_write_string(worksheet, 0, 0, row[i], NULL);
-            }
+            worksheet_write_string(worksheet, 0, i, row[i], NULL);
         }
     }
     printf("\n");

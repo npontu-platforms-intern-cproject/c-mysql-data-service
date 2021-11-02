@@ -10,7 +10,10 @@
 				"${file}",
 				"-o",
 				"${fileDirname}/${fileBasenameNoExtension}",
-				"`mysql_config --cflags --libs`"
+				"-L${workspaceFolder}/lib -llibxlsxwriter",
+				"-I${workspaceFolder}/include",
+				"-I${workspaceFolder}/src",
+				"`mysql_config --cflags --libs`",
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
