@@ -1,5 +1,5 @@
 # Excel files
-.xlsx
+*.xlsx
 
 # Prerequisites
 *.d
