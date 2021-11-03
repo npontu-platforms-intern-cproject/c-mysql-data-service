@@ -11,13 +11,16 @@ ifdef V
 Q=
 endif
 
+MYSQL_INC_DIR := $(shell mysql_config --cflags)
+LIBMYSQLCLIENT := $(shell mysql_config --libs)
+
 # Directory variables.
 INC_DIR = ./include
-INC_DIR = /usr/include/mysql/
+# MYSQL_INC_DIR = /usr/include/mysql/
 
 # Flags passed to the C++ compiler.
 CFLAGS += -g -Wall -Wextra
-CFLAGS += -I/usr/include/mysql/
+CFLAGS += $(MYSQL_INC_DIR)
 
 # Source files to compile.
 SRCS = $(wildcard *.c)
@@ -25,14 +28,16 @@ EXES = $(patsubst %.c,%,$(SRCS))
 
 LIBXLSXWRITER = ./src/libxlsxwriter.a
 
+# Libraries to include
 LIBS = $(LIBXLSXWRITER) -lz
 ifdef USE_SYSTEM_MINIZIP
 LIBS += -lminizip
-LIBS += -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -ldl -lz -lssl -lcrypto -lresolv -lm -lrt
 endif
 ifdef USE_OPENSSL_MD5
 LIBS += -lcrypto
 endif
+
+LIBS += $(LIBMYSQLCLIENT)
 
 all : $(LIBXLSXWRITER) $(EXES)
 

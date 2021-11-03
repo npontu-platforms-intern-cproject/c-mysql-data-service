@@ -47,29 +47,24 @@ int main()
     lxw_workbook *workbook = workbook_new("data-book.xlsx");
     lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
 
+    int sheetRow = 0, sheetCol = 0;
+
     while ((row = mysql_fetch_row(result)))
     {
         for (int i = 0; i < num_fields; i++)
         {
             if (i == 0)
             {
-                while (field = mysql_fetch_field(result))
+                while ((field = mysql_fetch_field(result)))
                 {
-                    // printf("%s ", field->name);
-                    for (int k = 0; k < num_fields; k++)
-                    {
-                        worksheet_write_string(worksheet, 0, k, row[k], NULL);
-                    }
+                    worksheet_write_string(worksheet, 0, sheetCol, field->name, NULL);
+                    sheetCol += 1;
                 }
-
-                printf("\n");
             }
-
-            // printf("%s ", row[i] ? row[i] : "NULL");
-            worksheet_write_string(worksheet, 0, i, row[i], NULL);
+            worksheet_write_string(worksheet, sheetRow, i, row[i], NULL);
         }
+        sheetRow += 1;
     }
-    printf("\n");
 
     mysql_free_result(result);
     workbook_close(workbook);

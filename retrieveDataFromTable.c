@@ -49,7 +49,7 @@ int main()
         {
             if (i == 0)
             {
-                while (field = mysql_fetch_field(result))
+                while ((field = mysql_fetch_field(result)))
                 {
                     printf("%s ", field->name);
                 }
