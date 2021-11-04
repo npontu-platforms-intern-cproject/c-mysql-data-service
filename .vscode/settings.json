@@ -3,7 +3,8 @@
 		"mysql.h": "c",
 		"stdio.h": "c",
 		"types.h": "c",
-		"xmlwriter.h": "c"
+		"xmlwriter.h": "c",
+		"functions.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled"
 }
