@@ -16,8 +16,7 @@
 /*
  * Struct to represent a table object.
  */
-typedef struct lxw_table
-{
+typedef struct lxw_table {
 
     FILE *file;
 
@@ -25,21 +24,21 @@ typedef struct lxw_table
 
 } lxw_table;
 
+
 /* *INDENT-OFF* */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-    /* *INDENT-ON* */
+/* *INDENT-ON* */
 
-    lxw_table *lxw_table_new(void);
-    void lxw_table_free(lxw_table *table);
-    void lxw_table_assemble_xml_file(lxw_table *self);
+lxw_table *lxw_table_new(void);
+void lxw_table_free(lxw_table *table);
+void lxw_table_assemble_xml_file(lxw_table *self);
 
 /* Declarations required for unit testing. */
 #ifdef TESTING
 
-    STATIC void _table_xml_declaration(lxw_table *self);
+STATIC void _table_xml_declaration(lxw_table *self);
 
 #endif /* TESTING */
 
