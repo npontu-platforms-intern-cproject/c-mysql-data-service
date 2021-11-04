@@ -1,3 +1,6 @@
+#Executable files
+bin/
+
 # Excel files
 *.xlsx
 
