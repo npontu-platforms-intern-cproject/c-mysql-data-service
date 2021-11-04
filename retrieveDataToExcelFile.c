@@ -40,27 +40,24 @@ int main()
     }
 
     int num_fields = mysql_num_fields(result);
-
     MYSQL_ROW row;
-
     MYSQL_FIELD *field;
     lxw_workbook *workbook = workbook_new("data-book.xlsx");
     lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
-
     int sheetRow = 0, sheetCol = 0;
 
+    // Write field names in the first row
+    while ((field = mysql_fetch_field(result)))
+    {
+        worksheet_write_string(worksheet, sheetRow, sheetCol, field->name, NULL);
+        sheetCol += 1;
+    }
+    // Start writing data at second row since
+    sheetRow = 1;
     while ((row = mysql_fetch_row(result)))
     {
         for (int i = 0; i < num_fields; i++)
         {
-            if (i == 0)
-            {
-                while ((field = mysql_fetch_field(result)))
-                {
-                    worksheet_write_string(worksheet, 0, sheetCol, field->name, NULL);
-                    sheetCol += 1;
-                }
-            }
             worksheet_write_string(worksheet, sheetRow, i, row[i], NULL);
         }
         sheetRow += 1;
