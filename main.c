@@ -7,9 +7,23 @@
 
 
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-    retrieveDataToExcelFile();
+    if (argc == 1){
+        retrieveDataToExcelFile();
+    } 
+    else if (argc == 2){
+        if (atoi(argv[1]) == 1)
+        {
+            createDb();
+        }
+        else if (atoi(argv[1]) == 2){
+            createAndPopulateTable();
+        }
+        else if (atoi(argv[1]) == 3){
+            retrieveDataFromTable();
+        }        
+    }
 }
 
 
