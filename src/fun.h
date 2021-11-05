@@ -52,13 +52,13 @@ int createAndPopulateTable(char *tableName, char *dbN)
         finish_with_error(con);
     }
 
-    sprintf(query, "DROP TABLE IF EXISTS %s", tableName);
+    sprintf(query, "DROP TABLE IF EXISTS ?", tableName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "CREATE TABLE %s(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tableName);
+    sprintf(query, "CREATE TABLE ?(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tableName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
