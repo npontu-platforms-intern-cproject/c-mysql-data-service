@@ -1,48 +1,33 @@
-#include <mysql/mysql.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <mysql.h>
 #include "xlsxwriter.h"
+
 #include "fun.h"
-// #include "conio.h"
-#include <ncurses.h>
 
 int main(int argc, char *argv[])
 {
-    int i = 0;
-    char ch;
-    char password[256];
-    printf("Enter password: ");
-    while ((ch = getch()) != 13)
+    if (argc == 3)
     {
-        password[i] = ch;
-        i += 1;
-        printf("*");
-    }
-    password[i] = '\0';
-
-    char username[256];
-    printf("Enter Username: ");
-    scanf("%s", username);
-    printf("Username is: %s", username);
-    printf("Password is: %s", password);
-
-    if (argc == 1)
-    {
-        retrieveDataToExcelFile();
-    }
-    else if (argc == 2)
-    {
-        if (atoi(argv[1]) == 1)
+        if (strcmp(argv[1], "create-db") == 0)
         {
-            createDb();
+            createDb(argv[2]);
         }
-        else if (atoi(argv[1]) == 2)
+    }
+    if (argc == 5)
+    {
+        if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[1], "-d") == 0))
         {
-            createAndPopulateTable();
+            createAndPopulateTable(argv[2], argv[4]);
         }
-        else if (atoi(argv[1]) == 3)
+    }
+    if (argc == 6)
+    {
+        if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
         {
-            retrieveDataFromTable();
+            retrieveDataFromTable(argv[5], argv[3]);
+            retrieveDataToExcelFile(argv[5], argv[3]);
         }
     }
 }
