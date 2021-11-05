@@ -8,7 +8,7 @@ int createDb(char *dbN)
         fprintf(stderr, "%s\n", mysql_error(con));
         exit(1);
     }
-
+ 
     if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345", NULL, 0, NULL, 0) == NULL)
     {
         fprintf(stderr, "%s\n", mysql_error(con));
