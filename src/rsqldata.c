@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     }
     if (argc == 5)
     {
-        if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[1], "-d") == 0))
+        if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
         {
             createAndPopulateTable(argv[2], argv[4]);
         }
