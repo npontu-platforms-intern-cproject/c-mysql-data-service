@@ -4,7 +4,9 @@
 		"stdio.h": "c",
 		"types.h": "c",
 		"xmlwriter.h": "c",
-		"functions.h": "c"
+		"functions.h": "c",
+		"xlsxwriter.h": "c",
+		"ncurses.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled"
 }
