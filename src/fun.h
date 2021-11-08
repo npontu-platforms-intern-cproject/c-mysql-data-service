@@ -162,7 +162,7 @@ int retrieveDataToExcelFile(char *tbname, char *dbname)
 
     exit(0);
 }
-
+ 
 int createTable(char *tableName, char *dbN)
 {
     char query[300];
