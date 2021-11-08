@@ -3,7 +3,7 @@
 		{
 			"type": "cppbuild",
 			"label": "C/C++: gcc build active file",
-			"command": "/usr/bin/gcc",
+			"command": "/usr/bin/cc",
 			"args": [
 				"-fdiagnostics-color=always",
 				"-g",
@@ -12,6 +12,7 @@
 				"${fileDirname}/${fileBasenameNoExtension}",
 				"-L${workspaceFolder}/lib -llibxlsxwriter",
 				"-I${workspaceFolder}/include",
+				"-I/usr/include -lncurses",
 				"-I${workspaceFolder}/src",
 				"`mysql_config --cflags --libs`",
 			],

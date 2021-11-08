@@ -116,7 +116,7 @@ int createAndPopulateTable(char *tableName, char *dbN)
     exit(0);
 }
 
-int retrieveDataFromTable(char *tableName, char *dbN)
+void retrieveDataFromTable(char *tableName, char *dbN)
 {
     char query[300];
     void finish_with_error(MYSQL * con)

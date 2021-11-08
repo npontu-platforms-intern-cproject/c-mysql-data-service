@@ -49,7 +49,7 @@ clean :
 
 # Executable targets.
 $(EXES): $(SRCS) $(LIBXLSXWRITER) | $(BIN_PATH)
-	$(Q)$(CC) -I$(INC_DIR) $(CFLAGS) $< -o $@ $(LIBS)
+	$(Q)$(CC) -I$(INC_DIR) $(CFLAGS) $< -o $@ $(LIBS) -lncurses
 
 $(BIN_PATH):
 	mkdir $(BIN_PATH)

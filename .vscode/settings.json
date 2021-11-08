@@ -7,7 +7,11 @@
 		"functions.h": "c",
 		"xlsxwriter.h": "c",
 		"ncurses.h": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"stdlib.h": "c",
+		"conio.h": "c",
+		"curses.h": "c",
+		"signal.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled"
 }
