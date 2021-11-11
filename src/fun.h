@@ -44,7 +44,7 @@ int retrieveDataToExcelFile(char *tbname, char *dbname)
         fprintf(stderr, "mysql_init() failed\n");
         exit(1);
     }
-    
+
     if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345", dbname, 0, NULL, 0) == NULL)
     {
         finish_with_error(con);
@@ -96,8 +96,8 @@ int retrieveDataToExcelFile(char *tbname, char *dbname)
 
     exit(0);
 }
- 
-int createTable(char *tableName, char *dbN)
+
+void retrieveDataFromTable(char *tableName, char *dbN)
 {
     char query[300];
     void finish_with_error(MYSQL * con)
@@ -160,7 +160,6 @@ int populateTable(char *tableName, char *dbN, char *buff)
         finish_with_error(con);
     }
 
-
     sprintf(query, buff, tableName);
     if (mysql_query(con, query))
     {
@@ -175,17 +174,16 @@ int readQrsLine(char *tableName, char *dbN, char *path)
 {
     FILE *file;
     char buff[255];
-    
+
     file = fopen(path, "r");
 
     createTable(tableName, dbN);
 
-    while (fgets(buff, 255, (FILE*)file) != NULL)
+    while (fgets(buff, 255, (FILE *)file) != NULL)
     {
         populateTable(tableName, dbN, buff);
     }
-    
+
     fclose(file);
     return 0;
 }
-
