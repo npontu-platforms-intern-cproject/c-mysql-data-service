@@ -4,15 +4,7 @@
 #include <mysql.h>
 #include <curses.h>
 #include "xlsxwriter.h"
-
 #include "fun.h"
-
-void finish_with_error(MYSQL *con)
-{
-    fprintf(stderr, "%s\n", mysql_error(con));
-    mysql_close(con);
-    exit(1);
-}
 
 char pwd[50];
 char user[50];
@@ -27,6 +19,7 @@ int main(int argc, char *argv[])
     // Enter curses mode
     initscr();
     echo();
+
     // Get database user
     printw("\nMySQL User: ");
     scanw("%s", &user);
@@ -80,7 +73,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, 0) == NULL)
+    if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
     {
         finish_with_error(con);
     }
@@ -90,22 +83,23 @@ int main(int argc, char *argv[])
     {
         if (strcmp(argv[1], "create-db") == 0)
         {
-            createDb(argv[2]);
+            createDb(con, argv[2]);
         }
     }
     if (argc == 5)
     {
         if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
         {
-            createAndPopulateTable(argv[2], argv[4]);
+            createAndPopulateTable(con, argv[2], argv[4]);
         }
     }
     if (argc == 6)
     {
         if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
         {
-            retrieveDataFromTable(argv[5], argv[3]);
-            retrieveDataToExcelFile(argv[5], argv[3]);
+            retrieveDataFromTable(con, argv[5], argv[3]);
+            retrieveDataToExcelFile(con, argv[5], argv[3]);
         }
     }
+    return 0;
 }

@@ -1,22 +1,17 @@
-int createDb(char *dbN)
+#include <stdio.h>
+
+void finish_with_error(MYSQL *con)
+{
+    fprintf(stderr, "%s\n", mysql_error(con));
+    mysql_close(con);
+    exit(1);
+}
+
+int createDb(MYSQL *con, char *dbName)
 {
     char query[300];
-    MYSQL *con = mysql_init(NULL);
 
-    if (con == NULL)
-    {
-        fprintf(stderr, "%s\n", mysql_error(con));
-        exit(1);
-    }
-
-    if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345", NULL, 0, NULL, 0) == NULL)
-    {
-        fprintf(stderr, "%s\n", mysql_error(con));
-        mysql_close(con);
-        exit(1);
-    }
-
-    sprintf(query, "CREATE DATABASE %s", dbN);
+    sprintf(query, "CREATE DATABASE %s", dbName);
     if (mysql_query(con, query))
     {
         fprintf(stderr, "%s\n", mysql_error(con));
@@ -28,85 +23,70 @@ int createDb(char *dbN)
     exit(0);
 }
 
-int createAndPopulateTable(char *tableName, char *dbN)
+int createAndPopulateTable(MYSQL *con, char *tbName, char *dbName)
 {
     char query[300];
-    void finish_with_error(MYSQL * con)
-    {
-        fprintf(stderr, "%s\n", mysql_error(con));
-        mysql_close(con);
-        exit(1);
-    }
-
-    MYSQL *con = mysql_init(NULL);
-
-    if (con == NULL)
-    {
-        fprintf(stderr, "%s\n", mysql_error(con));
-        exit(1);
-    }
-
-    if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345",
-                           dbN, 0, NULL, 0) == NULL)
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "DROP TABLE IF EXISTS %s", tableName);
+    sprintf(query, "USE %s", dbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "CREATE TABLE %s (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tableName);
+    sprintf(query, "DROP TABLE IF EXISTS %s", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(1,'Audi',52642)", tableName);
+    sprintf(query, "CREATE TABLE %s (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(2,'Mercedes',57127)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(1,'Audi',52642)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(3,'Skoda',9000)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(2,'Mercedes',57127)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(4,'Volvo',29000)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(3,'Skoda',9000)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(5,'Bentley',350000)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(4,'Volvo',29000)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(6,'Citroen',21000)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(5,'Bentley',350000)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(7,'Hummer',41400)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(6,'Citroen',21000)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "INSERT INTO %s VALUES(8,'Volkswagen',21600)", tableName);
+    sprintf(query, "INSERT INTO %s VALUES(7,'Hummer',41400)", tbName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+
+    sprintf(query, "INSERT INTO %s VALUES(8,'Volkswagen',21600)", tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
@@ -116,31 +96,11 @@ int createAndPopulateTable(char *tableName, char *dbN)
     exit(0);
 }
 
-void retrieveDataFromTable(char *tableName, char *dbN)
+void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
 {
     char query[300];
-    void finish_with_error(MYSQL * con)
-    {
-        fprintf(stderr, "%s\n", mysql_error(con));
-        mysql_close(con);
-        exit(1);
-    }
 
-    MYSQL *con = mysql_init(NULL);
-
-    if (con == NULL)
-    {
-        fprintf(stderr, "mysql_init() failed\n");
-        exit(1);
-    }
-
-    if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345",
-                           dbN, 0, NULL, 0) == NULL)
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "SELECT * FROM %s", tableName);
+    sprintf(query, "USE %s; SELECT * FROM %s", dbName, tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
@@ -182,30 +142,18 @@ void retrieveDataFromTable(char *tableName, char *dbN)
     mysql_close(con);
 }
 
-int retrieveDataToExcelFile(char *tbname, char *dbname)
+int retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
 {
-    void finish_with_error(MYSQL * con)
-    {
-        fprintf(stderr, "l%s\n", mysql_error(con));
-        mysql_close(con);
-        exit(1);
-    }
+    char query[300];
 
-    MYSQL *con = mysql_init(NULL);
-
-    if (con == NULL)
-    {
-        fprintf(stderr, "mysql_init() failed\n");
-        exit(1);
-    }
-    char *th = "dbname";
-    if (mysql_real_connect(con, "localhost", "ayarma", "/secretKey/12345", "testdb", 0, NULL, 0) == NULL)
+    sprintf(query, "USE %s", dbName);
+    if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
-    //char query[300];
-    //sprintf(query, "SELECT * FROM %s", tbname);
-    if (mysql_query(con, "SELECT * FROM cars"))
+
+    sprintf(query, "SELECT * FROM %s", tbName);
+    if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
