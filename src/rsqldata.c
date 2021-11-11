@@ -1,10 +1,16 @@
 #include <mysql.h>
 #include "xlsxwriter.h"
+#include <string.h>
 
 #include "fun.h"
+#include <curses.h>
+
+
 
 int main(int argc, char *argv[])
 {
+
+    // Process argument variables
     if (argc == 3)
     {
         if (strcmp(argv[1], "create-db") == 0)
@@ -25,7 +31,6 @@ int main(int argc, char *argv[])
 
         if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
         {
-            retrieveDataFromTable(argv[5], argv[3]);
             retrieveDataToExcelFile(argv[5], argv[3]);
         }
     }
