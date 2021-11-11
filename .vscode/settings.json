@@ -6,7 +6,8 @@
 		"xmlwriter.h": "c",
 		"functions.h": "c",
 		"xlsxwriter.h": "c",
-		"ncurses.h": "c"
+		"ncurses.h": "c",
+		"fun.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled"
 }
