@@ -3,7 +3,6 @@
 #include <string.h>
 #include <mysql.h>
 #include <curses.h>
-#include "xlsxwriter.h"
 #include "fun.h"
 
 #define MAX_LIMIT 1024
@@ -87,7 +86,6 @@ int main()
                 command[len - 1] = '\0';
             }
         }
-
         // Parse arguments
         token = strtok(command, " ");
         j = 1;

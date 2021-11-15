@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <mysql.h>
+#include "xlsxwriter.h"
 
 void finish_with_error(MYSQL *con)
 {
@@ -44,78 +46,6 @@ int createTable(MYSQL *con, char *tableName, char *dbN)
     }
 
     return 0;
-}
-
-void createAndPopulateTable(MYSQL *con, char *tbName, char *dbName)
-{
-    char query[300];
-    sprintf(query, "USE %s", dbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "DROP TABLE IF EXISTS %s", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "CREATE TABLE %s (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(1,'Audi',52642)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(2,'Mercedes',57127)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(3,'Skoda',9000)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(4,'Volvo',29000)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(5,'Bentley',350000)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(6,'Citroen',21000)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(7,'Hummer',41400)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    sprintf(query, "INSERT INTO %s VALUES(8,'Volkswagen',21600)", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    mysql_close(con);
 }
 
 void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
@@ -225,8 +155,6 @@ int populateTable(MYSQL *con, char *tableName, char *buff)
     {
         finish_with_error(con);
     }
-
-    mysql_close(con);
     return 0;
 }
 
@@ -243,7 +171,7 @@ int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
     {
         populateTable(con, tableName, buff);
     }
-
+    mysql_close(con);
     fclose(file);
     return 0;
 }
