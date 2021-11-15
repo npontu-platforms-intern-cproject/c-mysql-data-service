@@ -216,7 +216,7 @@ void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
     mysql_close(con);
 }
 
-int populateTable(MYSQL *con, char *tableName, char *dbN, char *buff)
+int populateTable(MYSQL *con, char *tableName, char *buff)
 {
     char query[300];
 
@@ -241,7 +241,7 @@ int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
 
     while (fgets(buff, 255, (FILE *)file) != NULL)
     {
-        populateTable(con, tableName, dbN, buff);
+        populateTable(con, tableName, buff);
     }
 
     fclose(file);
