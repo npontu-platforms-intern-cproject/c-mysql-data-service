@@ -7,7 +7,7 @@ void finish_with_error(MYSQL *con)
     exit(1);
 }
 
-int createDb(MYSQL *con, char *dbName)
+void createDb(MYSQL *con, char *dbName)
 {
     char query[300];
 
@@ -20,10 +20,33 @@ int createDb(MYSQL *con, char *dbName)
     }
 
     mysql_close(con);
-    exit(0);
 }
 
-int createAndPopulateTable(MYSQL *con, char *tbName, char *dbName)
+int createTable(MYSQL *con, char *tableName, char *dbN)
+{
+    char query[300];
+    sprintf(query, "USE %s", dbN);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+
+    sprintf(query, "DROP TABLE IF EXISTS %s", tableName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+
+    sprintf(query, "CREATE TABLE %s(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255), price INT)", tableName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+
+    return 0;
+}
+
+void createAndPopulateTable(MYSQL *con, char *tbName, char *dbName)
 {
     char query[300];
     sprintf(query, "USE %s", dbName);
@@ -93,7 +116,6 @@ int createAndPopulateTable(MYSQL *con, char *tbName, char *dbName)
     }
 
     mysql_close(con);
-    exit(0);
 }
 
 void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
@@ -142,7 +164,7 @@ void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
     mysql_close(con);
 }
 
-int retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
+void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
 {
     char query[256];
     char filename[256];
@@ -192,7 +214,6 @@ int retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
     mysql_free_result(result);
     workbook_close(workbook);
     mysql_close(con);
-    exit(0);
 }
 
 int populateTable(char *tableName, char *dbN, char *buff)
@@ -229,14 +250,14 @@ int populateTable(char *tableName, char *dbN, char *buff)
     return 0;
 }
 
-int readQrsLine(char *tableName, char *dbN, char *path)
+int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
 {
     FILE *file;
     char buff[255];
 
     file = fopen(path, "r");
 
-    createTable(tableName, dbN);
+    createTable(con, tableName, dbN);
 
     while (fgets(buff, 255, (FILE *)file) != NULL)
     {

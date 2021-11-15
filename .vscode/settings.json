@@ -11,7 +11,10 @@
 		"stdlib.h": "c",
 		"conio.h": "c",
 		"curses.h": "c",
-		"signal.h": "c"
+		"signal.h": "c",
+		"semaphore.h": "c",
+		"cctype": "c",
+		"math.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "Disabled"
 }
