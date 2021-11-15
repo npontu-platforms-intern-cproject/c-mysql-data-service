@@ -1,9 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <mysql.h>
 #include <curses.h>
 #include "xlsxwriter.h"
-#include <string.h>
 #include "fun.h"
-#include <curses.h>
 
 #define MAX_LIMIT 1024
 
@@ -86,6 +87,7 @@ int main()
                 command[len - 1] = '\0';
             }
         }
+
         // Parse arguments
         token = strtok(command, " ");
         j = 1;
@@ -107,21 +109,6 @@ int main()
                 printf("Exiting...\n");
                 exit(0);
             }
-    }
-    if (argc == 5)
-    {
-        createTable(argv[2], argv[4]);
-    }
-    if (argc == 6)
-    {
-        if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
-        {
-            readQrsLine(argv[2], argv[4], argv[5]);
-        }
-
-        if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
-        {
-            retrieveDataToExcelFile(argv[5], argv[3]);
         }
 
         // TODO: Check for unknown arguments
