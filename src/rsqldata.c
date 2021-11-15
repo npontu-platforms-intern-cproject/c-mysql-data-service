@@ -21,6 +21,9 @@ char helpMessage[] = "\nC-MySQL-Data-Service\n \
 Usage:\n \
     create-db [database] --creates a new database\n \
     create-table [table] -d [database] --creates a new table in database\n \
+    create-table [table] -d [database] [filepath] --creates a new table in database with data from the given file\n \
+    retrieve-data -d [database] -t  --retrieves the table from the database\n \
+    retrieve-data -d [database] [filepath] --retrieves the table from the database and writes it to the given file\n \
     help -- show this help menu\n \
     quit -- quit the program\n";
 
@@ -66,7 +69,7 @@ int main()
         exit(1);
     }
 
-    // if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
+    // Connect to MySQL
     if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, 0) == NULL)
     {
         finish_with_error(con);
@@ -109,7 +112,22 @@ int main()
             }
         }
 
-        // TODO: Check for unknown arguments
+        // Check for unknown arguments
+        if (strcmp(argv[1], "create-db") == 0)
+            ;
+        else if (strcmp(argv[1], "create-table") == 0)
+            ;
+        else if (strcmp(argv[1], "retrieve-database") == 0)
+            ;
+        else if (strcmp(argv[1], "quit") == 0)
+            ;
+        else if (strcmp(argv[1], "help") == 0)
+            ;
+        else
+        {
+            printf("Unknown command: %s\n", argv[1]);
+            printf("%s", helpMessage);
+        }
 
         // Process arguments
         if (argc == 3)

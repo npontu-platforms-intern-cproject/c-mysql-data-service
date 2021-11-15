@@ -4,6 +4,10 @@
 
 void finish_with_error(MYSQL *con)
 {
+    /* 
+    Close the mysql connection and
+    print any errors
+    */
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
     exit(1);
@@ -11,6 +15,9 @@ void finish_with_error(MYSQL *con)
 
 void createDb(MYSQL *con, char *dbName)
 {
+    /*
+    Create a database with name "dbName"
+    */
     char query[300];
 
     sprintf(query, "CREATE DATABASE %s", dbName);
@@ -26,6 +33,9 @@ void createDb(MYSQL *con, char *dbName)
 
 int createTable(MYSQL *con, char *tableName, char *dbN)
 {
+    /*
+    Create a table called tableName in the database dbN
+    */
     char query[300];
     sprintf(query, "USE %s", dbN);
     if (mysql_query(con, query))
@@ -50,27 +60,26 @@ int createTable(MYSQL *con, char *tableName, char *dbN)
 
 void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
 {
+    /*
+    Retrieve data from a particular table in database
+    */
     char query[300];
+    MYSQL_RES *result;
+    int num_fields;
+    MYSQL_ROW row;
+    MYSQL_FIELD *field;
 
     sprintf(query, "SELECT * FROM `%s`.`%s`", dbName, tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
-
-    MYSQL_RES *result = mysql_store_result(con);
-
+    result = mysql_store_result(con);
     if (result == NULL)
     {
         finish_with_error(con);
     }
-
-    int num_fields = mysql_num_fields(result);
-
-    MYSQL_ROW row;
-
-    MYSQL_FIELD *field;
-
+    num_fields = mysql_num_fields(result);
     while ((row = mysql_fetch_row(result)))
     {
         for (int i = 0; i < num_fields; i++)
@@ -84,18 +93,19 @@ void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
 
                 printf("\n");
             }
-
             printf("%s ", row[i] ? row[i] : "NULL");
         }
     }
     printf("\n");
-
     mysql_free_result(result);
     mysql_close(con);
 }
 
 void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
 {
+    /*
+    Retrieve data from a particular table in a database to excel file
+    */
     char query[256];
     char filename[256];
     MYSQL_RES *result;
