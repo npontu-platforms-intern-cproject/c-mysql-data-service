@@ -14,6 +14,7 @@ endif
 MYSQL_INC_DIR := $(shell mysql_config --cflags)
 LIBMYSQLCLIENT := $(shell mysql_config --libs)
 
+
 # Directory variables.
 INC_DIR = ./include/libxlsxwriter/include
 
@@ -52,4 +53,5 @@ $(EXES): $(SRCS) $(LIBXLSXWRITER) | $(BIN_PATH)
 	$(Q)$(CC) -I$(INC_DIR) $(CFLAGS) $< -o $@ $(LIBS) -lncurses
 
 $(BIN_PATH):
-	mkdir $(BIN_PATH)
+	mkdir $(BIN_PATH) 
+
