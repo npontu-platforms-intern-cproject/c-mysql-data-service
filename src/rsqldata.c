@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
+    // if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL)
+    if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, 0) == NULL)
     {
         finish_with_error(con);
     }
@@ -97,7 +98,6 @@ int main(int argc, char *argv[])
     {
         if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
         {
-            retrieveDataFromTable(con, argv[5], argv[3]);
             retrieveDataToExcelFile(con, argv[5], argv[3]);
         }
     }

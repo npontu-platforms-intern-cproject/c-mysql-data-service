@@ -100,7 +100,7 @@ void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
 {
     char query[300];
 
-    sprintf(query, "USE %s; SELECT * FROM %s", dbName, tbName);
+    sprintf(query, "SELECT * FROM `%s`.`%s`", dbName, tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
@@ -144,36 +144,34 @@ void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
 
 int retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
 {
-    char query[300];
+    char query[256];
+    char filename[256];
+    MYSQL_RES *result;
+    lxw_workbook *workbook;
+    lxw_worksheet *worksheet;
+    MYSQL_ROW row;
+    MYSQL_FIELD *field;
+    int sheetRow = 0, sheetCol = 0, sheetRowNext = 1;
+    int num_fields = 0;
 
-    sprintf(query, "USE %s", dbName);
+    sprintf(query, "SELECT * FROM `%s`.`%s`", dbName, tbName);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
     }
 
-    sprintf(query, "SELECT * FROM %s", tbName);
-    if (mysql_query(con, query))
-    {
-        finish_with_error(con);
-    }
-
-    MYSQL_RES *result = mysql_store_result(con);
+    result = mysql_store_result(con);
 
     if (result == NULL)
     {
         finish_with_error(con);
     }
 
-    int num_fields = mysql_num_fields(result);
+    num_fields = mysql_num_fields(result);
 
-    MYSQL_ROW row;
-
-    MYSQL_FIELD *field;
-    lxw_workbook *workbook = workbook_new("data-book.xlsx");
-    lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
-
-    int sheetRow = 0, sheetCol = 0, sheetRowNext = 1;
+    sprintf(filename, "%s.xlsx", tbName);
+    workbook = workbook_new(filename);
+    worksheet = workbook_add_worksheet(workbook, NULL);
 
     while ((row = mysql_fetch_row(result)))
     {
@@ -191,10 +189,8 @@ int retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
         }
         sheetRowNext += 1;
     }
-
     mysql_free_result(result);
     workbook_close(workbook);
     mysql_close(con);
-
     exit(0);
 }
