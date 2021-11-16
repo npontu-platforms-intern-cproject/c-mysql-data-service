@@ -11,7 +11,8 @@ char pwd[50];
 char user[50];
 char host[50];
 char ch;
-int unsigned port = 3306;
+unsigned int port = 3306;
+unsigned int k = 1;
 int j, i = 0;
 int argc = 0;
 char *argv[1600];
@@ -69,10 +70,17 @@ int main()
         exit(1);
     }
 
+    // Set options
+    // 1. Enable load data local infile in current directory
+    mysql_options(con, MYSQL_OPT_LOCAL_INFILE, &k);
+    mysql_options(con, MYSQL_OPT_LOAD_DATA_LOCAL_DIR, ".");
+
     // Connect to MySQL
     if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, 0) == NULL)
     {
-        finish_with_error(con);
+        fprintf(stderr, "Failed to connect to database: Error: %s\n",
+                mysql_error(con));
+        exit(1);
     }
 
     // Process argument variables
@@ -88,20 +96,30 @@ int main()
             {
                 command[len - 1] = '\0';
             }
+            // Parse arguments
+            token = strtok(command, " ");
+            j = 1;
+            while (token != NULL)
+            {
+                argv[j] = token;
+                token = strtok(NULL, " ");
+                j++;
+            }
+            argc = j;
         }
-        // Parse arguments
-        token = strtok(command, " ");
-        j = 1;
-        while (token != NULL)
+
+        // Process arguments
+        if (argc >= 2)
         {
-            argv[j] = token;
-            token = strtok(NULL, " ");
-            j++;
-        }
-        argc = j;
-        if (argc == 2)
-        {
-            if (strcmp(argv[1], "help") == 0)
+            if (strcmp(argv[1], "create-db") == 0)
+                ;
+            else if (strcmp(argv[1], "create-table") == 0)
+                ;
+            else if (strcmp(argv[1], "retrieve-database") == 0)
+                ;
+            else if (strcmp(argv[1], "load-data") == 0)
+                ;
+            else if (strcmp(argv[1], "help") == 0)
             {
                 printf("%s", helpMessage);
             }
@@ -110,26 +128,14 @@ int main()
                 printf("Exiting...\n");
                 exit(0);
             }
+            else
+            {
+                // Unknown arguments
+                printf("Unknown command: %s\n", argv[1]);
+                printf("%s", helpMessage);
+            }
         }
 
-        // Check for unknown arguments
-        if (strcmp(argv[1], "create-db") == 0)
-            ;
-        else if (strcmp(argv[1], "create-table") == 0)
-            ;
-        else if (strcmp(argv[1], "retrieve-database") == 0)
-            ;
-        else if (strcmp(argv[1], "quit") == 0)
-            ;
-        else if (strcmp(argv[1], "help") == 0)
-            ;
-        else
-        {
-            printf("Unknown command: %s\n", argv[1]);
-            printf("%s", helpMessage);
-        }
-
-        // Process arguments
         if (argc == 3)
         {
             if (strcmp(argv[1], "create-db") == 0)
@@ -137,11 +143,17 @@ int main()
                 createDb(con, argv[2]);
             }
         }
+
         if (argc == 5)
         {
             if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
             {
                 createTable(con, argv[2], argv[4]);
+            }
+            else if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
+            {
+                printf("It's working");
+                tbFromSingleLineSchemaFile(con, argv[3], argv[4]);
             }
         }
 
@@ -151,10 +163,17 @@ int main()
             {
                 readQrsLine(con, argv[2], argv[4], argv[5]);
             }
-
-            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+            else if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
                 retrieveDataToExcelFile(con, argv[5], argv[3]);
+            }
+        }
+
+        if (argc == 7)
+        {
+            if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+            {
+                populateTableWithFile(con, argv[5], argv[3], argv[6]);
             }
         }
     } while (1);

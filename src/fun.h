@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <mysql.h>
+#include <string.h>
 #include "xlsxwriter.h"
 
 void finish_with_error(MYSQL *con)
@@ -10,7 +11,6 @@ void finish_with_error(MYSQL *con)
     */
     fprintf(stderr, "%s\n", mysql_error(con));
     mysql_close(con);
-    exit(1);
 }
 
 void createDb(MYSQL *con, char *dbName)
@@ -158,6 +158,9 @@ void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
 
 int populateTable(MYSQL *con, char *tableName, char *buff)
 {
+    /*
+    Load data into table
+    */
     char query[300];
 
     sprintf(query, buff, tableName);
@@ -166,6 +169,70 @@ int populateTable(MYSQL *con, char *tableName, char *buff)
         finish_with_error(con);
     }
     return 0;
+}
+
+void populateTableWithTxtFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+{
+    char query[300];
+
+    sprintf(query, "USE %s", dbName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+    sprintf(query, "LOAD DATA LOCAL INFILE \"%s\" INTO TABLE %s", filePath, tbName);
+    printf("Query: %s", query);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+}
+
+void populateTableWithCsvFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+{
+    char query[300];
+    sprintf(query, "USE %s", dbName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+    sprintf(query, "LOAD DATA LOCAL INFILE \"%s\" INTO TABLE %s \
+                        FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' \
+                        LINES TERMINATED BY '\n'",
+            filePath, tbName);
+    if (mysql_query(con, query))
+    {
+        finish_with_error(con);
+    }
+}
+
+void populateTableWithFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+{
+    // Determine file extension
+    char *token;
+    char *fileExt;
+    char filePathCopy[256];
+    strcpy(filePathCopy, filePath);
+    token = strtok(filePathCopy, ".");
+    while (token != NULL)
+    {
+        token = strtok(NULL, ".");
+        if (token != NULL)
+        {
+            fileExt = token;
+        }
+    }
+    printf("File: %s", filePath);
+    if (strcmp(fileExt, "txt") == 0)
+    {
+        //  .txt file
+        populateTableWithTxtFile(con, tbName, dbName, filePath);
+    }
+    else if (strcmp(fileExt, "csv") == 0)
+    {
+        //  .csv file
+        populateTableWithCsvFile(con, tbName, dbName, filePath);
+    }
 }
 
 int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
@@ -183,5 +250,30 @@ int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
     }
     mysql_close(con);
     fclose(file);
+    return 0;
+}
+
+int tbFromSingleLineSchemaFile(MYSQL *con, char *dbName, char *path)
+{
+    FILE *file;
+    char buff[1024];
+    sprintf(buff, "USE %s", dbName);
+    if (mysql_query(con, buff))
+    {
+        finish_with_error(con);
+    }
+
+    file = fopen(path, "r");
+    if (fgets(buff, 1024, (FILE *)file) != NULL)
+    {
+        fclose(file);
+
+        if (mysql_query(con, buff))
+        {
+            finish_with_error(con);
+        }
+        mysql_close(con);
+    }
+
     return 0;
 }
