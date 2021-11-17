@@ -13,7 +13,7 @@ void finish_with_error(MYSQL *con)
     mysql_close(con);
 }
 
-void createDb(MYSQL *con, char *dbName)
+void create_db(MYSQL *con, char *dbName)
 {
     /*
     Create a database with name "dbName"
@@ -29,7 +29,7 @@ void createDb(MYSQL *con, char *dbName)
     mysql_close(con);
 }
 
-int createTable(MYSQL *con, char *tableName, char *dbN)
+int create_table(MYSQL *con, char *tableName, char *dbN)
 {
     /*
     Create a table called tableName in the database dbN
@@ -56,7 +56,7 @@ int createTable(MYSQL *con, char *tableName, char *dbN)
     return 0;
 }
 
-void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
+void retrieve_data_from_table(MYSQL *con, char *tbName, char *dbName)
 {
     /*
     Retrieve data from a particular table in database
@@ -99,7 +99,7 @@ void retrieveDataFromTable(MYSQL *con, char *tbName, char *dbName)
     mysql_close(con);
 }
 
-void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
+void retieve_data_to_excel_file(MYSQL *con, char *tbName, char *dbName)
 {
     /*
     Retrieve data from a particular table in a database to excel file
@@ -154,7 +154,7 @@ void retrieveDataToExcelFile(MYSQL *con, char *tbName, char *dbName)
     mysql_close(con);
 }
 
-int populateTable(MYSQL *con, char *tableName, char *buff)
+int populate_table(MYSQL *con, char *tableName, char *buff)
 {
     /*
     Load data into table
@@ -169,7 +169,7 @@ int populateTable(MYSQL *con, char *tableName, char *buff)
     return 0;
 }
 
-void populateTableWithTxtFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+void populate_table_with_txt_file(MYSQL *con, char *tbName, char *dbName, char *filePath)
 {
     char query[300];
 
@@ -185,7 +185,7 @@ void populateTableWithTxtFile(MYSQL *con, char *tbName, char *dbName, char *file
     }
 }
 
-void populateTableWithCsvFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+void populate_table_with_csv_file(MYSQL *con, char *tbName, char *dbName, char *filePath)
 {
     char query[300];
     sprintf(query, "USE %s", dbName);
@@ -203,7 +203,7 @@ void populateTableWithCsvFile(MYSQL *con, char *tbName, char *dbName, char *file
     }
 }
 
-void populateTableWithFile(MYSQL *con, char *tbName, char *dbName, char *filePath)
+void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *filePath)
 {
     // Determine file extension
     char *token;
@@ -222,34 +222,34 @@ void populateTableWithFile(MYSQL *con, char *tbName, char *dbName, char *filePat
     if (strcmp(fileExt, "txt") == 0)
     {
         //  .txt file
-        populateTableWithTxtFile(con, tbName, dbName, filePath);
+        populate_table_with_txt_file(con, tbName, dbName, filePath);
     }
     else if (strcmp(fileExt, "csv") == 0)
     {
         //  .csv file
-        populateTableWithCsvFile(con, tbName, dbName, filePath);
+        populate_table_with_csv_file(con, tbName, dbName, filePath);
     }
 }
 
-int readQrsLine(MYSQL *con, char *tableName, char *dbN, char *path)
+int read_qrs_line(MYSQL *con, char *tableName, char *dbN, char *path)
 {
     FILE *file;
     char buff[255];
 
     file = fopen(path, "r");
 
-    createTable(con, tableName, dbN);
+    create_table(con, tableName, dbN);
 
     while (fgets(buff, 255, (FILE *)file) != NULL)
     {
-        populateTable(con, tableName, buff);
+        populate_table(con, tableName, buff);
     }
     mysql_close(con);
     fclose(file);
     return 0;
 }
 
-int tbFromSingleLineSchemaFile(MYSQL *con, char *dbName, char *path)
+int tb_from_single_line_schema_file(MYSQL *con, char *dbName, char *path)
 {
     FILE *file;
     char buff[1024];

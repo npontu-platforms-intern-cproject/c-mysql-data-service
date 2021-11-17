@@ -48,14 +48,14 @@ int main()
         // {
         //     if (strcmp(argv[1], "create-db") == 0)
         //     {
-        //         createDb(con, argv[2]);
+        //         create_db(con, argv[2]);
         //     }
         // }
         // if (argc == 5)
         // {
         //     if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
         //     {
-        //         createTable(con, argv[2], argv[4]);
+        //         create_table(con, argv[2], argv[4]);
         //     }
         // }
 
@@ -63,12 +63,12 @@ int main()
         // {
         //     if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
         //     {
-        //         readQrsLine(con, argv[2], argv[4], argv[5]);
+        //         read_qrs_line(con, argv[2], argv[4], argv[5]);
         //     }
 
         //     if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
         //     {
-        //         retrieveDataToExcelFile(con, argv[5], argv[3]);
+        //         retieve_data_to_excel_file(con, argv[5], argv[3]);
         //     }
         // }
     } while (1);
