@@ -25,9 +25,7 @@ void createDb(MYSQL *con, char *dbName)
     {
         fprintf(stderr, "%s\n", mysql_error(con));
         mysql_close(con);
-        exit(1);
     }
-
     mysql_close(con);
 }
 
@@ -181,7 +179,6 @@ void populateTableWithTxtFile(MYSQL *con, char *tbName, char *dbName, char *file
         finish_with_error(con);
     }
     sprintf(query, "LOAD DATA LOCAL INFILE \"%s\" INTO TABLE %s", filePath, tbName);
-    printf("Query: %s", query);
     if (mysql_query(con, query))
     {
         finish_with_error(con);
@@ -222,7 +219,6 @@ void populateTableWithFile(MYSQL *con, char *tbName, char *dbName, char *filePat
             fileExt = token;
         }
     }
-    printf("File: %s", filePath);
     if (strcmp(fileExt, "txt") == 0)
     {
         //  .txt file
