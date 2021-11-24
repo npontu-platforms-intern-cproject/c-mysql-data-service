@@ -203,12 +203,12 @@ void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *file
     if (strcmp(fileExt, "txt") == 0)
     {
         //  .txt file
-        populateTableWithTxtFile(con, tbName, dbName, filePath);
+        populate_table_with_txt_file(con, tbName, dbName, filePath);
     }
     else if (strcmp(fileExt, "csv") == 0)
     {
         //  .csv file
-        populateTableWithCsvFile(con, tbName, dbName, filePath);
+        populate_table_with_csv_file(con, tbName, dbName, filePath);
     }
 }
 

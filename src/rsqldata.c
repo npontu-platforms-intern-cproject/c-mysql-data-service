@@ -152,7 +152,7 @@ int main()
         {
             if (strcmp(argv[1], "create-db") == 0)
             {
-                createDb(con, argv[2]);
+                create_db(con, argv[2]);
             }
         }
 
@@ -168,12 +168,12 @@ int main()
         {
             if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
             {
-                createTable(con, argv[2], argv[4]);
+                create_table(con, argv[2], argv[4]);
             }
             else if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
             {
                 printf("It's working");
-                tbFromSingleLineSchemaFile(con, argv[3], argv[4]);
+                tb_from_single_line_schema_file(con, argv[3], argv[4]);
             }
         }
 
@@ -181,7 +181,7 @@ int main()
         {
             if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
             {
-                readQrsLine(con, argv[2], argv[4], argv[5]);
+                read_qrs_line(con, argv[2], argv[4], argv[5]);
             }
             else if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
@@ -194,7 +194,7 @@ int main()
         {
             if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
-                populateTableWithFile(con, argv[5], argv[3], argv[6]);
+                populate_table_with_file(con, argv[5], argv[3], argv[6]);
             }
         }
     } while (1);
