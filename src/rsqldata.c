@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <mysql.h>
 #include <curses.h>
 #include "fun.h"
@@ -18,6 +19,7 @@ int argc = 0;
 char *argv[1600];
 char command[MAX_LIMIT];
 char *token;
+bool reconnect = 1;
 char helpMessage[] = "\nC-MySQL-Data-Service\n \
 Usage:\n \
     create-db [database] --creates a new database\n \
@@ -25,6 +27,10 @@ Usage:\n \
     create-table [table] -d [database] [filepath] --creates a new table in database with data from the given file\n \
     retrieve-data -d [database] -t  --retrieves the table from the database\n \
     retrieve-data -d [database] [filepath] --retrieves the table from the database and writes it to the given file\n \
+    list-dbs [regex]    Returns a result set consisting of database names on the server that match the simple regular \
+                        expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
+    list-tables -d [database] [regex]    Returns a result set consisting of database names on the server that match the simple regular \
+                        expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
     help -- show this help menu\n \
     quit -- quit the program\n";
 
@@ -75,11 +81,15 @@ int main()
     mysql_options(con, MYSQL_OPT_LOCAL_INFILE, &k);
     mysql_options(con, MYSQL_OPT_LOAD_DATA_LOCAL_DIR, ".");
 
+    // 1. Enable reconnection of mysql
+    mysql_options(con, MYSQL_OPT_RECONNECT, &reconnect);
+
     // Connect to MySQL
     if (mysql_real_connect(con, host, user, pwd, NULL, port, NULL, 0) == NULL)
     {
         fprintf(stderr, "Failed to connect to database: Error: %s\n",
                 mysql_error(con));
+        mysql_library_end();
         exit(1);
     }
 
@@ -125,6 +135,8 @@ int main()
             }
             else if (strcmp(argv[1], "quit") == 0)
             {
+                mysql_close(con);
+                mysql_library_end();
                 printf("Exiting...\n");
                 exit(0);
             }
@@ -141,6 +153,14 @@ int main()
             if (strcmp(argv[1], "create-db") == 0)
             {
                 createDb(con, argv[2]);
+            }
+        }
+
+        if (argc == 4)
+        {
+            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
+            {
+                retrieveDbDataToExcelFile(con, argv[3]);
             }
         }
 
@@ -165,7 +185,8 @@ int main()
             }
             else if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
-                retrieveDataToExcelFile(con, argv[5], argv[3]);
+                // retrieveDataToExcelFile(con, argv[5], argv[3]);
+                retrieveTableDataToExcelFile(con, argv[5], argv[2]);
             }
         }
 
