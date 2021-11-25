@@ -36,7 +36,7 @@ void create_db(MYSQL *con, char *dbName)
     }
     else
     {
-        sprintf(success_message, "Successfully created database: %s", dbName);
+        sprintf(success_message, "Successfully created database: %s\n", dbName);
         finish_with_success(con, success_message);
     }
 }
@@ -69,6 +69,8 @@ void retrieve_data_to_excel_worksheet(MYSQL *con, lxw_workbook *workbook, char *
     {
         num_fields = mysql_num_fields(result);
         worksheet = workbook_add_worksheet(workbook, tbName);
+        printf("Worksheet %s created...\n", tbName);
+        printf("Retrieving data to %s...\n", tbName);
         while ((row = mysql_fetch_row(result)))
         {
             for (int i = 0; i < num_fields; i++)
@@ -86,6 +88,10 @@ void retrieve_data_to_excel_worksheet(MYSQL *con, lxw_workbook *workbook, char *
             sheetRowNext += 1;
         }
         mysql_free_result(result);
+        if (!mysql_errno(con))
+        {
+            printf("Done retrieving data to %s...\n", tbName);
+        }
     }
 }
 
@@ -96,6 +102,7 @@ void retrieve_table_data_to_excel_file(MYSQL *con, char *tbName, char *dbName)
     */
     char filename[255];
     lxw_workbook *workbook;
+    char success_message[255];
 
     if (mysql_select_db(con, dbName))
     {
@@ -105,11 +112,16 @@ void retrieve_table_data_to_excel_file(MYSQL *con, char *tbName, char *dbName)
     {
         sprintf(filename, "%s.xlsx", dbName);
         workbook = workbook_new(filename);
-        printf("%s\n", "Spreadsheet file created...");
+        printf("Spreadsheet file %s.xlsx created...\n", dbName);
         retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
-        printf("%s\n", "Worksheet created, populating with data...");
         workbook_close(workbook);
-        finish_with_success(con, "Successfully retrieved data...");
+        if (!mysql_errno(con))
+        {
+            sprintf(success_message, "Successfully retrieved data \
+                                    from table %s to spreadsheet file %s.xlsx...\n",
+                    tbName, dbName);
+            finish_with_success(con, success_message);
+        }
     }
 }
 
@@ -118,6 +130,7 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
 
     char filename[255];
     char tbName[255];
+    char success_message[255];
     MYSQL_RES *result;
     MYSQL_ROW row;
     lxw_workbook *workbook;
@@ -126,28 +139,38 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
     {
         finish_with_error(con);
     }
-    result = mysql_list_tables(con, NULL);
-    if (result == NULL)
-    {
-        finish_with_error(con);
-    }
     else
     {
-        sprintf(filename, "%s.xlsx", dbName);
-        workbook = workbook_new(filename);
-
-        while ((row = mysql_fetch_row(result)))
+        result = mysql_list_tables(con, NULL);
+        if (result == NULL)
         {
-            // Result is records of tables in database
-            // one column per row hence row[0]
-            strcpy(tbName, row[0]);
-            if (tbName != NULL)
+            finish_with_error(con);
+        }
+        else
+        {
+            sprintf(filename, "%s.xlsx", dbName);
+            workbook = workbook_new(filename);
+            printf("Spreadsheet file %s.xlsx created...\n", dbName);
+            while ((row = mysql_fetch_row(result)))
             {
-                printf("%s", tbName);
-                retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
+                // Result is records of tables in database
+                // one column per row hence row[0]
+                strcpy(tbName, row[0]);
+                if (tbName != NULL)
+                {
+                    printf("%s", tbName);
+                    retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
+                }
+            }
+            workbook_close(workbook);
+            if (!mysql_errno(con))
+            {
+                sprintf(success_message, "Successfully retrieved data \
+                                    from table %s to spreadsheet file %s.xlsx...\n",
+                        tbName, dbName);
+                finish_with_success(con, success_message);
             }
         }
-        workbook_close(workbook);
     }
 }
 
@@ -189,6 +212,7 @@ void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *file
     char *token;
     char *fileExt;
     char filePathCopy[255];
+    char success_message[255];
     strcpy(filePathCopy, filePath);
     token = strtok(filePathCopy, ".");
     while (token != NULL)
@@ -199,6 +223,7 @@ void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *file
             fileExt = token;
         }
     }
+    printf("Populating table %s with data from %s...\n", tbName, filePath);
     if (strcmp(fileExt, "txt") == 0)
     {
         //  .txt file
@@ -209,30 +234,42 @@ void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *file
         //  .csv file
         populate_table_with_csv_file(con, tbName, dbName, filePath);
     }
+    if (!mysql_errno(con))
+    {
+        printf("Done populating %s with data...\n", tbName);
+    }
 }
 
 int tb_from_single_line_schema_file(MYSQL *con, char *dbName, char *path)
 {
     FILE *file;
     char buff[1024];
+    char query[1024 * 1024];
     if (mysql_select_db(con, dbName))
     {
         finish_with_error(con);
     }
-    file = fopen(path, "r");
-    if (fgets(buff, 1024, (FILE *)file) != NULL)
+    else
     {
+        file = fopen(path, "r");
+        while (fgets(buff, 1024, (FILE *)file) != NULL)
+        {
+            strcat(query, buff);
+        }
         fclose(file);
-        if (mysql_query(con, buff))
+        if (mysql_query(con, query))
         {
             finish_with_error(con);
         }
         else
         {
             char success_message[300];
-            sprintf(success_message, "Succefully created table in %s database...", dbName);
+            sprintf(success_message, "Succefully created table in %s database \
+                                        using schema from %s...\n",
+                    dbName, path);
             finish_with_success(con, success_message);
         }
     }
+
     return 0;
 }

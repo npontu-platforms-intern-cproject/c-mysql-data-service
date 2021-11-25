@@ -68,7 +68,6 @@ int main()
     // Get port number
     printw("Port (Leave blank to use default (3306): ");
     scanw("%d", &port);
-    getch();
 
     // Leave curses mode
     endwin();
@@ -150,72 +149,71 @@ int main()
             {
                 // Unknown arguments
                 printf("Unknown command: %s\n", argv[1]);
-                printf("%s\n", helpMessage);
             }
-        }
 
-        if (argc == 3)
-        {
-            if (strcmp(argv[1], "create-db") == 0)
+            if (argc == 3)
             {
-                create_db(con, argv[2]);
+                if (strcmp(argv[1], "create-db") == 0)
+                {
+                    create_db(con, argv[2]);
+                }
+                else
+                {
+                    sytax_error();
+                }
+            }
+
+            else if (argc == 4)
+            {
+                if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
+                {
+                    retrieve_db_data_to_excel_file(con, argv[3]);
+                }
+                else
+                {
+                    sytax_error();
+                }
+            }
+
+            else if (argc == 5)
+            {
+                if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
+                {
+                    tb_from_single_line_schema_file(con, argv[3], argv[4]);
+                }
+                else
+                {
+                    sytax_error();
+                }
+            }
+
+            else if (argc == 6)
+            {
+                if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+                {
+                    retrieve_table_data_to_excel_file(con, argv[5], argv[2]);
+                }
+                else
+                {
+                    sytax_error();
+                }
+            }
+
+            else if (argc == 7)
+            {
+                if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+                {
+                    populate_table_with_file(con, argv[5], argv[3], argv[6]);
+                }
+                else
+                {
+                    sytax_error();
+                }
             }
             else
             {
                 sytax_error();
             }
-        }
-
-        else if (argc == 4)
-        {
-            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
-            {
-                retrieve_db_data_to_excel_file(con, argv[3]);
-            }
-            else
-            {
-                sytax_error();
-            }
-        }
-
-        else if (argc == 5)
-        {
-            if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
-            {
-                tb_from_single_line_schema_file(con, argv[3], argv[4]);
-            }
-            else
-            {
-                sytax_error();
-            }
-        }
-
-        else if (argc == 6)
-        {
-            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
-            {
-                retrieve_table_data_to_excel_file(con, argv[5], argv[2]);
-            }
-            else
-            {
-                sytax_error();
-            }
-        }
-
-        else if (argc == 7)
-        {
-            if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
-            {
-                populate_table_with_file(con, argv[5], argv[3], argv[6]);
-            }
-            else
-            {
-                sytax_error();
-            }
-        }
-        else
-        {
-            sytax_error();
         }
 
     } while (1);
