@@ -15,6 +15,9 @@ A C background service that is able to insert large data sets into a MySQL table
     To build the project run `make` in the project root folder
     Executable file `rsqldata` will be located in project-root-folder/bin
     Before running the application make sure you have MySQL running.
+    The following files have been provided for testing purposes:
+        - data-book.csv
+        - data-book.txt
 
 # Usage
      create-db [database] 
