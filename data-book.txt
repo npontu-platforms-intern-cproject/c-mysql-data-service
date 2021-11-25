@@ -1,4 +1,3 @@
-id	name	price
 1	Citroen	21000
 2	Citroen	21000
 3	Citroen	21000

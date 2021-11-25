@@ -50,6 +50,7 @@
 		"system_error": "c",
 		"utility": "c",
 		"typeinfo": "c",
-		"cinttypes": "c"
+		"cinttypes": "c",
+		"stdbool.h": "c"
 	}
 }
