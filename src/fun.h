@@ -245,7 +245,6 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
                 strcpy(tbName, row[0]);
                 if (tbName != NULL)
                 {
-                    printf("%s", tbName);
                     retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
                 }
             }
