@@ -33,19 +33,19 @@ Usage:\n \
     load-data -d [database] -t [table] [path-to-txt-or-csv-file]\n \
         -- populate table in database with data from file\n \
     list-dbs [regex]\n \
-        -- Returns a result set consisting of database names on the server that match the simple regular \
-                        expression specified by the wild parameter. wild may contain the wildcard characters \% or _ \n \
+        -- Returns a result set consisting of database names on the server\n \
+            that match the simple regular expression regex.\n \
+            regex may contain the wildcard characters \% or _ \n \
+            Omitting regex assumes all databases \n \
     list-tables -d [database] [regex]\n \
-        -- Returns a result set consisting of database names on the server that match the simple regular \
-                        expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
+        -- Returns a result set consisting of database names on the server\n \
+            that match the simple regular expression specified by regex\n \
+            regex may contain the wildcard characters \% or _ \n \
+            Omitting regex assumes all tables in database\n \
     help -- show this help menu\n \
     quit -- quit the program\n";
 
-void sytax_error()
-{
-    printf("%s\n", "Please check your syntax.");
-    printf("%s\n", "Type 'help' to show available commands");
-}
+void sytax_error();
 
 int main()
 
@@ -77,6 +77,7 @@ int main()
     scanw("%d", &port);
 
     // Leave curses mode
+    refresh();
     endwin();
 
     // Initialize and connect to database
@@ -106,10 +107,11 @@ int main()
     }
 
     // Process argument variables
-    printf("%s", helpMessage);
+    printf("%s\n", helpMessage);
     do
     {
         // Read the command line arguments
+        printf("%s", "mysql-data-service> ");
         if (fgets(command, MAX_LIMIT, stdin) != NULL)
         {
             // Remove trailing newline character from fgets() input
@@ -130,20 +132,24 @@ int main()
             argc = j;
         }
 
-        // Process arguments
+        // Check for unknown arguments
         if (argc >= 2)
         {
-            if (strcmp(argv[1], "create-db") == 0)
+            if (
+                (strcmp(argv[1], "create-db") == 0) || (strcmp(argv[1], "create-table") == 0) || (strcmp(argv[1], "retrieve-data") == 0) || (strcmp(argv[1], "load-data") == 0) || (strcmp(argv[1], "list-tables") == 0) || (strcmp(argv[1], "list-dbs") == 0) || (strcmp(argv[1], "help") == 0) || (strcmp(argv[1], "quit") == 0))
                 ;
-            else if (strcmp(argv[1], "create-table") == 0)
-                ;
-            else if (strcmp(argv[1], "retrieve-data") == 0)
-                ;
-            else if (strcmp(argv[1], "load-data") == 0)
-                ;
-            else if (strcmp(argv[1], "help") == 0)
+            else
             {
-                printf("%s", helpMessage);
+                printf("ERROR (Unknown command): %s\n", argv[1]);
+            }
+        }
+
+        // Process arguments
+        if (argc == 2)
+        {
+            if (strcmp(argv[1], "help") == 0)
+            {
+                printf("%s\n", helpMessage);
             }
             else if (strcmp(argv[1], "quit") == 0)
             {
@@ -152,70 +158,80 @@ int main()
                 printf("%s\n", "Exiting...");
                 exit(0);
             }
+            else if (strcmp(argv[1], "list-dbs") == 0)
+            {
+                list_dbs(con, NULL);
+            }
             else
             {
-                // Unknown arguments
-                printf("Unknown command: %s\n", argv[1]);
+                sytax_error();
             }
-
-            if (argc == 3)
+        }
+        else if (argc == 3)
+        {
+            if (strcmp(argv[1], "list-dbs") == 0)
             {
-                if (strcmp(argv[1], "create-db") == 0)
-                {
-                    create_db(con, argv[2]);
-                }
-                else
-                {
-                    sytax_error();
-                }
+                list_dbs(con, argv[2]);
             }
-
-            else if (argc == 4)
+            else if (strcmp(argv[1], "create-db") == 0)
             {
-                if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
-                {
-                    retrieve_db_data_to_excel_file(con, argv[3]);
-                }
-                else
-                {
-                    sytax_error();
-                }
+                create_db(con, argv[2]);
             }
-
-            else if (argc == 5)
+            else
             {
-                if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
-                {
-                    tb_from_single_line_schema_file(con, argv[3], argv[4]);
-                }
-                else
-                {
-                    sytax_error();
-                }
+                sytax_error();
             }
+        }
 
-            else if (argc == 6)
+        else if (argc == 4)
+        {
+            if ((strcmp(argv[1], "list-tables") == 0) && (strcmp(argv[2], "-d") == 0))
             {
-                if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
-                {
-                    retrieve_table_data_to_excel_file(con, argv[5], argv[2]);
-                }
-                else
-                {
-                    sytax_error();
-                }
+                list_tables(con, argv[3], NULL);
             }
-
-            else if (argc == 7)
+            else if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
             {
-                if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
-                {
-                    populate_table_with_file(con, argv[5], argv[3], argv[6]);
-                }
-                else
-                {
-                    sytax_error();
-                }
+                retrieve_db_data_to_excel_file(con, argv[3]);
+            }
+            else
+            {
+                sytax_error();
+            }
+        }
+
+        else if (argc == 5)
+        {
+            if ((strcmp(argv[1], "list-tables") == 0) && (strcmp(argv[2], "-d") == 0))
+            {
+                list_tables(con, argv[3], argv[4]);
+            }
+            else if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
+            {
+                tb_from_schema_file(con, argv[3], argv[4]);
+            }
+            else
+            {
+                sytax_error();
+            }
+        }
+
+        else if (argc == 6)
+        {
+            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+            {
+                retrieve_table_data_to_excel_file(con, argv[5], argv[3]);
+            }
+            else
+            {
+                sytax_error();
+            }
+        }
+
+        else if (argc == 7)
+        {
+            if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+            {
+                populate_table_with_file(con, argv[5], argv[3], argv[6]);
             }
             else
             {
@@ -226,4 +242,10 @@ int main()
     } while (1);
 
     return 0;
+}
+
+void sytax_error()
+{
+    printf("%s\n", "ERROR: Please check your syntax.");
+    printf("%s\n", "Type 'help' to show available commands");
 }

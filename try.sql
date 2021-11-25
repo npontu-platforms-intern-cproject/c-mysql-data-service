@@ -1,5 +1,5 @@
-CREATE TABLE autos (
+CREATE TABLE autos8 (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255), 
     price INT
-)
+);
