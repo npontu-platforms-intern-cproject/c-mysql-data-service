@@ -130,7 +130,7 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
 
     char filename[255];
     char tbName[255];
-    char success_message[255];
+    char success_message[512];
     MYSQL_RES *result;
     MYSQL_ROW row;
     lxw_workbook *workbook;
@@ -212,7 +212,6 @@ void populate_table_with_file(MYSQL *con, char *tbName, char *dbName, char *file
     char *token;
     char *fileExt;
     char filePathCopy[255];
-    char success_message[255];
     strcpy(filePathCopy, filePath);
     token = strtok(filePathCopy, ".");
     while (token != NULL)

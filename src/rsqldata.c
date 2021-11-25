@@ -22,14 +22,21 @@ char *token;
 bool reconnect = 1;
 char helpMessage[] = "\nC-MySQL-Data-Service\n \
 Usage:\n \
-    create-db [database] --creates a new database\n \
-    create-table [table] -d [database] --creates a new table in database\n \
-    create-table [table] -d [database] [filepath] --creates a new table in database with data from the given file\n \
-    retrieve-data -d [database] -t  --retrieves the table from the database\n \
-    retrieve-data -d [database] [filepath] --retrieves the table from the database and writes it to the given file\n \
-    list-dbs [regex]    Returns a result set consisting of database names on the server that match the simple regular \
+    create-db [database] \n \
+        -- creates a new database\n \
+    create-table -d [database] [filepath]\n \
+        -- creates a new table in database with schema from the given file\n \
+    retrieve-data -d [database] -t [table]\n \
+        -- retrieves data from table in database\n \
+    retrieve-data -d [database] \n \
+        -- retrieves the all data from all tables in database\n \
+    load-data -d [database] -t [table] [path-to-txt-or-csv-file]\n \
+        -- populate table in database with data from file\n \
+    list-dbs [regex]\n \
+        -- Returns a result set consisting of database names on the server that match the simple regular \
                         expression specified by the wild parameter. wild may contain the wildcard characters \% or _ \n \
-    list-tables -d [database] [regex]    Returns a result set consisting of database names on the server that match the simple regular \
+    list-tables -d [database] [regex]\n \
+        -- Returns a result set consisting of database names on the server that match the simple regular \
                         expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
     help -- show this help menu\n \
     quit -- quit the program\n";
