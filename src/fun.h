@@ -19,7 +19,7 @@ void finish_with_success(MYSQL *con, char *message)
     warnings = mysql_warning_count(con);
     num_rows = mysql_affected_rows(con);
     fprintf(stdout, "%s\n", message);
-    fprintf(stdout, "Affected Rows: %d, Warnings: %d\n", num_rows, warnings);
+    fprintf(stdout, "Affected Rows: %ld, Warnings: %d\n", num_rows, warnings);
 }
 
 void create_db(MYSQL *con, char *dbName)
@@ -106,7 +106,7 @@ void retrieve_table_data_to_excel_file(MYSQL *con, char *tbName, char *dbName)
         sprintf(filename, "%s.xlsx", dbName);
         workbook = workbook_new(filename);
         printf("%s\n", "Spreadsheet file created...");
-        retrieveDataToExcelWorksheet(con, workbook, dbName, tbName);
+        retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
         printf("%s\n", "Worksheet created, populating with data...");
         workbook_close(workbook);
         finish_with_success(con, "Successfully retrieved data...");
@@ -118,7 +118,6 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
 
     char filename[255];
     char tbName[255];
-    char query[255];
     MYSQL_RES *result;
     MYSQL_ROW row;
     lxw_workbook *workbook;
@@ -145,7 +144,7 @@ void retrieve_db_data_to_excel_file(MYSQL *con, char *dbName)
             if (tbName != NULL)
             {
                 printf("%s", tbName);
-                retrieveDataToExcelWorksheet(con, workbook, dbName, tbName);
+                retrieve_data_to_excel_worksheet(con, workbook, dbName, tbName);
             }
         }
         workbook_close(workbook);
@@ -227,6 +226,12 @@ int tb_from_single_line_schema_file(MYSQL *con, char *dbName, char *path)
         if (mysql_query(con, buff))
         {
             finish_with_error(con);
+        }
+        else
+        {
+            char success_message[300];
+            sprintf(success_message, "Succefully created table in %s database...", dbName);
+            finish_with_success(con, success_message);
         }
     }
     return 0;

@@ -16,7 +16,7 @@ unsigned int port = 3306;
 unsigned int k = 1;
 int j, i = 0;
 int argc = 0;
-char *argv[1600];
+char *argv[10];
 char command[MAX_LIMIT];
 char *token;
 bool reconnect = 1;
@@ -28,11 +28,17 @@ Usage:\n \
     retrieve-data -d [database] -t  --retrieves the table from the database\n \
     retrieve-data -d [database] [filepath] --retrieves the table from the database and writes it to the given file\n \
     list-dbs [regex]    Returns a result set consisting of database names on the server that match the simple regular \
-                        expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
+                        expression specified by the wild parameter. wild may contain the wildcard characters \% or _ \n \
     list-tables -d [database] [regex]    Returns a result set consisting of database names on the server that match the simple regular \
                         expression specified by the wild parameter. wild may contain the wildcard characters %% or _ \
     help -- show this help menu\n \
     quit -- quit the program\n";
+
+void sytax_error()
+{
+    printf("%s\n", "Please check your syntax.");
+    printf("%s\n", "Type 'help' to show available commands");
+}
 
 int main()
 
@@ -125,7 +131,7 @@ int main()
                 ;
             else if (strcmp(argv[1], "create-table") == 0)
                 ;
-            else if (strcmp(argv[1], "retrieve-database") == 0)
+            else if (strcmp(argv[1], "retrieve-data") == 0)
                 ;
             else if (strcmp(argv[1], "load-data") == 0)
                 ;
@@ -137,14 +143,14 @@ int main()
             {
                 mysql_close(con);
                 mysql_library_end();
-                printf("Exiting...\n");
+                printf("%s\n", "Exiting...");
                 exit(0);
             }
             else
             {
                 // Unknown arguments
                 printf("Unknown command: %s\n", argv[1]);
-                printf("%s", helpMessage);
+                printf("%s\n", helpMessage);
             }
         }
 
@@ -154,49 +160,64 @@ int main()
             {
                 create_db(con, argv[2]);
             }
+            else
+            {
+                sytax_error();
+            }
         }
 
-        if (argc == 4)
+        else if (argc == 4)
         {
             if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0))
             {
-                retrieveDbDataToExcelFile(con, argv[3]);
+                retrieve_db_data_to_excel_file(con, argv[3]);
+            }
+            else
+            {
+                sytax_error();
             }
         }
 
-        if (argc == 5)
+        else if (argc == 5)
         {
-            if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
+            if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
             {
-                create_table(con, argv[2], argv[4]);
-            }
-            else if (strcmp(argv[1], "create-table") == 0 && (strcmp(argv[2], "-d") == 0))
-            {
-                printf("It's working");
                 tb_from_single_line_schema_file(con, argv[3], argv[4]);
             }
+            else
+            {
+                sytax_error();
+            }
         }
 
-        if (argc == 6)
+        else if (argc == 6)
         {
-            if ((strcmp(argv[1], "create-table") == 0) && (strcmp(argv[3], "-d") == 0))
+            if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
-                read_qrs_line(con, argv[2], argv[4], argv[5]);
+                retrieve_table_data_to_excel_file(con, argv[5], argv[2]);
             }
-            else if ((strcmp(argv[1], "retrieve-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
+            else
             {
-                // retrieveDataToExcelFile(con, argv[5], argv[3]);
-                retrieveTableDataToExcelFile(con, argv[5], argv[2]);
+                sytax_error();
             }
         }
 
-        if (argc == 7)
+        else if (argc == 7)
         {
             if ((strcmp(argv[1], "load-data") == 0) && (strcmp(argv[2], "-d") == 0) && (strcmp(argv[4], "-t") == 0))
             {
                 populate_table_with_file(con, argv[5], argv[3], argv[6]);
             }
+            else
+            {
+                sytax_error();
+            }
         }
+        else
+        {
+            sytax_error();
+        }
+
     } while (1);
 
     return 0;
